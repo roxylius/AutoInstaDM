@@ -3,8 +3,8 @@ const express = require('express');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const webhookRouter = require('./routes/webhook');
-const { rateLimiter } = require('./middleware/security');
+const webhookRouter = require('./src/routes/webhook');
+const { rateLimiter } = require('./src/middleware/security');
 const winston = require('winston');
 
 const app = express();
