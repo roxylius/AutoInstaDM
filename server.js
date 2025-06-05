@@ -10,6 +10,14 @@ const winston = require('winston');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy configuration for ngrok/development
+if (process.env.NODE_ENV === 'development') {
+  app.set('trust proxy', true);
+} else {
+  // For production, be more specific about trusted proxies
+  app.set('trust proxy', 1);
+}
+
 // Setup logging
 const logger = winston.createLogger({
   level: 'info',
