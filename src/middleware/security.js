@@ -2,8 +2,13 @@ const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
 
 exports.verifyWebhookSignature = (req, res, next) => {
+  if (req.method === 'GET') {
+    return next();
+  }
+
   const signature = req.get('x-hub-signature-256');
   if (!signature) {
+    console.warn('Missing signature for POST request');
     return res.status(403).send('Missing signature');
   }
 
@@ -22,5 +27,19 @@ exports.verifyWebhookSignature = (req, res, next) => {
 exports.rateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100,
-  message: 'Too many requests from this IP, please try again later.'
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Custom key generator to handle proxy issues properly
+  keyGenerator: (req) => {
+    // For development with ngrok, use a more specific approach
+    const forwarded = req.headers['x-forwarded-for'];
+    if (forwarded) {
+      // Get the first IP and remove any port numbers
+      const ip = forwarded.split(',')[0].trim().replace(/:\d+[^:]*$/, '');
+      return ip;
+    }
+    return req.ip || req.connection.remoteAddress || 'unknown';
+  },
+  skip: (req) => req.method === 'GET' && req.path === '/webhook'
 });

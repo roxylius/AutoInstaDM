@@ -6,13 +6,14 @@ const cors = require('cors');
 const webhookRouter = require('./src/routes/webhook');
 const { rateLimiter } = require('./src/middleware/security');
 const winston = require('winston');
+const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Trust proxy configuration for ngrok/development
 if (process.env.NODE_ENV === 'development') {
-  app.set('trust proxy', true);
+  app.set('trust proxy', 1);
 } else {
   // For production, be more specific about trusted proxies
   app.set('trust proxy', 1);
@@ -61,6 +62,27 @@ app.get('/analytics', (req, res) => {
   const analyticsService = require('./services/analyticsService');
   res.json(analyticsService.getStats());
 });
+
+// Test Instagram API connection
+app.get('/test-connection', async (req, res) => {
+  try {
+    const response = await axios.get(
+      `https://graph.facebook.com/v18.0/me?access_token=${process.env.PAGE_ACCESS_TOKEN}`
+    );
+    res.json({
+      status: 'Connected successfully',
+      account: response.data,
+      permissions: 'Check if instagram_manage_messages is included'
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Connection failed',
+      details: error.response?.data || error.message,
+      solution: 'Check your access token permissions'
+    });
+  }
+});
+
 
 app.listen(PORT, () => {
   logger.info(`Instagram DM Automation server running on port ${PORT}`);
