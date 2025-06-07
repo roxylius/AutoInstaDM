@@ -2,6 +2,7 @@ const axios = require('axios');
 const promotionService = require('../services/promotionService');
 const analyticsService = require('../services/analyticsService');
 const winston = require('winston');
+const { HtmlToText } = require('html-to-text-conv');
 
 const logger = winston.createLogger({
   level: 'info',
@@ -57,6 +58,35 @@ async function sendInstagramMessage(userId, message) {
     logger.error(`Failed to send message to user ${userId}:`, error);
     throw error;
   }
+}
+
+/**
+ * Returns a Promise that resolves after a specified timeout.
+ * @param {number} ms - The number of milliseconds to wait.
+ * @returns {Promise<void>} Resolves after the timeout completes.
+ */
+const waitForTimeout = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+/**
+ * Convert HTML (including tables, headings, links) to plain text.
+ * - Skips <button> elements entirely
+ * - Renders headings on their own lines
+ * - Preserves paragraphs with blank lines
+ * - Inlines links as "text (url)"
+ * - Formats tables with tabs between cells and newlines between rows
+ *
+ * @param {string} html - Raw HTML string to convert
+ * @returns {string}    - Plain-text representation
+ */
+function htmlResponseToText(html) {
+  //create converter object
+  const converter = new HtmlToText();
+
+  const text = converter.convert(html);
+
+  return text;
 }
 
 module.exports = {
