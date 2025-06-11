@@ -34,7 +34,8 @@ router.get('/', (req, res) => {
 });
 
 // Message reception endpoint
-router.post('/', verifyWebhookSignature, async (req, res) => {
+// router.post('/', verifyWebhookSignature, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const body = req.body;
     logger.info('Webhook received', { body });

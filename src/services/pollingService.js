@@ -107,7 +107,11 @@ class MessagePollingSystem {
     try {
       const combinedText = messages.map(msg => msg.text).join('\n');
       logger.info(`Generating AI response for: ${combinedText}`);
-      const aiResponse = await generateAIResponse(userId, combinedText, messages);
+
+      // const aiResponse = await generateAIResponse(userId, combinedText, messages);
+
+      //test reponse(dev)
+      const aiResponse = "hello";
       await sendInstagramMessage(userId, aiResponse);
     } catch (error) {
       logger.error(`Error processing messages for user ${userId}:`, error);

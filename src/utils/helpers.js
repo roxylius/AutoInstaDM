@@ -43,15 +43,15 @@ async function sendInstagramMessage(userId, message) {
     // Placeholder for actual Instagram API call
     logger.info(`Sending message to user ${userId}: ${message}`);
     // In a real implementation, use Meta's Graph API with axios
-    /*
-    const response = await axios.post(
-      `https://graph.facebook.com/v18.0/me/messages?access_token=${process.env.PAGE_ACCESS_TOKEN}`,
-      {
-        recipient: { id: userId },
-        message: { text: message }
-      }
-    );
-    */
+    
+    // const response = await axios.post(
+    //   `https://graph.facebook.com/v18.0/me/messages?access_token=${process.env.PAGE_ACCESS_TOKEN}`,
+    //   {
+    //     recipient: { id: userId },
+    //     message: { text: message }
+    //   }
+    // );
+
     analyticsService.logMessageSent(userId);
     return true;
   } catch (error) {
