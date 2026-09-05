@@ -18,15 +18,28 @@
 
   /* scroll reveal */
   var reveals = [].slice.call(document.querySelectorAll('.reveal'));
+  function revealNow(el) { el.classList.add('is-in'); }
+  function revealIfInView() {
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    reveals.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < vh * 0.95 && r.bottom > 0) revealNow(el);
+    });
+  }
   if (reduce || !('IntersectionObserver' in window)) {
-    reveals.forEach(function (el) { el.classList.add('is-in'); });
+    reveals.forEach(revealNow);
   } else {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+        if (e.isIntersecting) { revealNow(e.target); io.unobserve(e.target); }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
     reveals.forEach(function (el) { io.observe(el); });
+    // Failsafe: some browsers delay the initial IO callback until the first
+    // scroll/resize. Reveal anything already on screen right away.
+    revealIfInView();
+    window.addEventListener('load', revealIfInView);
+    setTimeout(revealIfInView, 400);
   }
 
   /* duplicate marquee content for a seamless loop */
@@ -86,12 +99,19 @@
     setTimeout(next, delay);
   }
 
-  /* start once the hero thread is on screen */
+  /* start once the hero thread is on screen (with a failsafe for browsers
+     that delay the first IO callback until a scroll) */
+  var started = false;
+  function begin() { if (!started) { started = true; setTimeout(next, 400); } }
   if ('IntersectionObserver' in window) {
     var start = new IntersectionObserver(function (entries, obs) {
-      if (entries[0].isIntersecting) { obs.disconnect(); setTimeout(next, 500); }
+      if (entries[0].isIntersecting) { obs.disconnect(); begin(); }
     }, { threshold: 0.3 });
     start.observe(thread);
+    setTimeout(function () {
+      var r = thread.getBoundingClientRect();
+      if (r.top < (window.innerHeight || 800) && r.bottom > 0) begin();
+    }, 1200);
   } else {
     setTimeout(next, 600);
   }
