@@ -45,9 +45,10 @@ See `.env.example` for the full list.
 
 1. Add the **Instagram** product, connect an Instagram professional account.
 2. Webhooks → Instagram → callback `https://<host>/webhook`, verify token = `WEBHOOK_VERIFY_TOKEN`, subscribe to `messages`.
-3. Data Deletion Request callback → `https://<host>/webhook/deletion-callback`.
-4. Privacy Policy URL → your hosted `/privacy` page (see `../web`).
-5. Request only `instagram_business_basic` and `instagram_business_manage_messages`.
+3. Data Deletion **Request callback URL** → `https://<host>/webhook/deletion-callback` (this server).
+4. Data Deletion **Instructions URL** → `https://<your-site>/data-deletion` (the `web/` site).
+5. Privacy Policy URL → `https://<your-site>/privacy` (the `web/` site).
+6. Request only `instagram_business_basic` and `instagram_business_manage_messages`.
 
 ## Endpoints
 
