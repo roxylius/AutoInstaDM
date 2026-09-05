@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — AutoInstaDM</title>
+  <meta name="theme-color" content="#0b0709" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="nav is-stuck">
+    <a href="index.html" class="wordmark">Auto<i>InstaDM</i></a>
+    <div class="nav__links">
+      <a href="index.html">Home</a>
+      <a href="terms.html">Terms</a>
+      <a href="index.html#start" class="nav__cta">Get on the list</a>
+    </div>
+  </nav>
+
+  <main class="container legal">
+    <div class="legal__head">
+      <h1>Privacy Policy</h1>
+      <p class="updated">Last updated: 4 September 2026</p>
+    </div>
+
+    <div class="legal__body">
+      <p class="note">
+        This policy describes how <strong>[Company Legal Name]</strong> ("we", "us")
+        operates AutoInstaDM ("Service"): an AI assistant that replies to Instagram
+        direct messages that users send to a participating creator's Instagram
+        professional account ("Creator").
+      </p>
+
+      <h2>1. Who is the data controller</h2>
+      <p>
+        For people who message a Creator ("Message Senders"), the Creator and
+        [Company Legal Name] act as joint controllers for the limited processing
+        described here. For Creators who sign up, [Company Legal Name] is the
+        controller. Contact: <a href="mailto:REPLACE_WITH_YOUR_CONTACT_EMAIL">[Contact Email]</a>.
+      </p>
+
+      <h2>2. Data we process</h2>
+      <h3>From Message Senders</h3>
+      <ul>
+        <li><strong>Instagram-scoped user ID (IGSID):</strong> a per-app identifier Meta assigns you. It cannot identify you outside this app.</li>
+        <li><strong>Message content you send to the Creator:</strong> used transiently to generate a reply. It is sent to our AI provider for that purpose and is <strong>not stored by us after the reply is generated</strong>, aside from short-lived processing queues and standard server logs.</li>
+        <li><strong>Conversation state:</strong> whether you opted out, whether you asked for a human, and the timestamp of your most recent message (to respect Instagram's 24-hour messaging window).</li>
+        <li><strong>Aggregate counts:</strong> number of messages received and sent.</li>
+      </ul>
+      <h3>From Creators</h3>
+      <ul>
+        <li>Account identifiers and the access token Meta issues for the connected Instagram professional account.</li>
+        <li>Configuration you provide (display name, business description, a single link, opt-out preferences).</li>
+        <li>Contact and billing details where applicable.</li>
+      </ul>
+      <p>We do <strong>not</strong> knowingly process special-category data, and we don't want you to send it. We do not collect payment card numbers through the Service.</p>
+
+      <h2>3. Why we process it (legal bases)</h2>
+      <ul>
+        <li><strong>To provide the Service</strong> — replying to messages you chose to send (contract / legitimate interests).</li>
+        <li><strong>To comply with platform rules and law</strong> — AI disclosure, opt-out handling, the 24-hour window, data-deletion obligations (legal obligation / legitimate interests).</li>
+        <li><strong>Security and abuse prevention</strong> — verifying webhook signatures, rate limiting, logging (legitimate interests).</li>
+      </ul>
+      <p>We do not sell personal data, and we do not use message content to train AI models.</p>
+
+      <h2>4. Sharing</h2>
+      <ul>
+        <li><strong>AI provider:</strong> message text and the assistant's instructions are sent to an OpenAI-compatible API provider selected by the operator (e.g. OpenAI, Anthropic) to generate replies, under that provider's terms.</li>
+        <li><strong>Meta Platforms:</strong> we exchange data with Instagram's API to receive and send messages.</li>
+        <li><strong>Infrastructure providers:</strong> hosting and an optional Redis cache, acting as processors.</li>
+        <li><strong>Legal:</strong> where required by law or to protect rights and safety.</li>
+      </ul>
+
+      <h2>5. Retention</h2>
+      <p>Conversation state and aggregate counts are kept for up to 45 days after your last interaction, then deleted or anonymised. Server logs containing metadata are retained for up to [30] days. Message content is not retained beyond transient processing.</p>
+
+      <h2 id="deletion">6. Your rights and how to delete your data</h2>
+      <p>Depending on where you live, you may have rights to access, correct, delete, restrict, or object to processing, and to data portability. To exercise them:</p>
+      <ul>
+        <li><strong>Message Senders:</strong> reply <strong>DELETE</strong> or <strong>STOP</strong> to the Creator's account, use the form at <code>/webhook/data-deletion</code> on the Creator's Service instance, or email <a href="mailto:REPLACE_WITH_YOUR_CONTACT_EMAIL">[Contact Email]</a>.</li>
+        <li><strong>Via Meta:</strong> removing the app or using Meta's data-deletion tools triggers our deletion callback automatically.</li>
+        <li><strong>Creators:</strong> email us or disconnect the app; we delete configuration and tokens.</li>
+      </ul>
+      <p>We complete verified deletion requests within 30 days. You may also complain to your local data-protection authority.</p>
+
+      <h2>7. International transfers</h2>
+      <p>Our providers may process data in the United States and other countries. Where required, transfers rely on Standard Contractual Clauses or equivalent safeguards.</p>
+
+      <h2>8. Children</h2>
+      <p>The Service is not directed to anyone under 18. If we learn that data from a minor has been processed, we delete it. Creators must not use the Service to interact with people they know or believe to be minors.</p>
+
+      <h2>9. Security</h2>
+      <p>We verify inbound webhook signatures, restrict tokens to the minimum scopes, rate-limit requests, and limit data retention. No system is perfectly secure.</p>
+
+      <h2>10. Changes</h2>
+      <p>We will post changes here and update the date above. Material changes will be communicated to Creators.</p>
+
+      <h2>11. Contact</h2>
+      <p>[Company Legal Name], [Registered Address]. Email: <a href="mailto:REPLACE_WITH_YOUR_CONTACT_EMAIL">[Contact Email]</a>.</p>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="container foot__base" style="border-top:0;margin-top:0">
+      <a href="index.html" class="wordmark">Auto<i>InstaDM</i></a>
+      <span>© <span id="year">2026</span> · <a href="terms.html" style="color:inherit">Terms</a></span>
+    </div>
+  </footer>
+  <script>var y=document.getElementById('year');if(y)y.textContent=new Date().getFullYear();</script>
+</body>
+</html>
