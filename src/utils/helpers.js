@@ -1,96 +1,129 @@
 const axios = require('axios');
-const promotionService = require('../services/promotionService');
 const analyticsService = require('../services/analyticsService');
-const winston = require('winston');
-const { HtmlToText } = require('html-to-text-conv');
+const { getLogger } = require('./logger');
+const {
+  igAccessToken,
+  graphApiVersion,
+  creatorDisplayName,
+  creatorBio,
+} = require('../config/env');
 
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/helpers.log' })
-  ]
-});
+const logger = getLogger('helpers');
 
+const GRAPH_HOST = 'https://graph.instagram.com';
+const MAX_MESSAGE_BYTES = 1000; // Instagram Platform hard limit for message text
+
+/**
+ * One-time disclosure prepended to the first automated reply in every
+ * conversation. Required so users are never misled into thinking they are
+ * talking to a human. Keep it short — it counts against the 1000-byte limit.
+ */
+function disclosureLine() {
+  return `🤖 Heads up: you're chatting with ${creatorDisplayName}'s automated assistant (AI). Reply "human" to reach a person or "stop" to opt out.`;
+}
+
+/** Lightweight intent bucket used to steer the system prompt. */
 function analyzeConversationType(messageText) {
-  const lowerText = messageText.toLowerCase();
-  if (/hi|hello|hey|sup|what's up/i.test(lowerText)) return 'greeting';
-  if (lowerText.includes('?') || /what|how|why|when|where|can|do you/i.test(lowerText)) return 'question';
-  if (/subscribe|buy|purchase|interested|price|cost|how much/i.test(lowerText)) return 'salesintent';
-  if (/love|amazing|beautiful|gorgeous|stunning|incredible/i.test(lowerText)) return 'compliment';
+  const t = (messageText || '').toLowerCase();
+  if (/\b(subscribe|sign up|join|link|where can i|how much|price|cost|pay)\b/.test(t)) return 'sales_question';
+  if (/\b(love|amazing|beautiful|gorgeous|stunning|incredible|cute|hot)\b/.test(t)) return 'compliment';
+  if (t.includes('?') || /\b(what|how|why|when|where|can you|do you)\b/.test(t)) return 'question';
+  if (/\b(hi|hello|hey|sup|yo|good morning|good evening)\b/.test(t)) return 'greeting';
   return 'general';
 }
 
-function buildSystemPrompt(conversationType, userId) {
-  const basePersonality = "You are a friendly, engaging content creator who creates premium content.";
-  const fanvuePromotion = `Your Fanvue page ${process.env.FANVUE_PROFILE_URL} has exclusive content for subscribers.`;
-  
-  const conversationStrategies = {
-    salesintent: `${basePersonality} They seem interested in your content! This is a perfect opportunity to mention your Fanvue page.`,
-    compliment: `${basePersonality} They complimented you! Respond graciously and make them feel special.`,
-    general: `${basePersonality} Keep the conversation flowing naturally. Be engaging and approachable.`
+/**
+ * Build the system prompt. The assistant is explicitly an AI acting on behalf of
+ * a named human creator. It must not: pretend to be human, produce sexual or
+ * explicit content, or push links that were not asked for.
+ */
+function buildSystemPrompt(conversationType) {
+  const guardrails = [
+    `You are an AI assistant replying to Instagram direct messages on behalf of ${creatorDisplayName}, an independent content creator.`,
+    creatorBio ? `About ${creatorDisplayName}: ${creatorBio}` : '',
+    'Rules you must always follow:',
+    '- Never claim to be a human or to be the creator personally. If asked, say you are an AI assistant.',
+    '- Never send sexually explicit content, nudity, sexual role-play, or descriptions of sexual acts. Instagram prohibits this in DMs regardless of the user\'s age or consent. Keep replies friendly and PG-13.',
+    '- Do not paste subscription or payment links unless the user clearly asks where to subscribe or for a link. The app handles link sharing separately.',
+    '- Keep replies concise (1-3 short sentences), warm, and in first person as the assistant.',
+    '- If the user seems distressed, a minor, or asks for anything unsafe, disengage politely and suggest they contact the creator directly.',
+  ].filter(Boolean);
+
+  const perType = {
+    greeting: 'The user is saying hello. Greet them back briefly and ask how you can help.',
+    compliment: 'The user paid a compliment. Thank them warmly and briefly, no more.',
+    question: 'Answer the user\'s question directly and briefly.',
+    sales_question: 'The user is asking about subscribing/pricing/links. Answer helpfully; the app will attach the official link if configured, so you do not need to invent one.',
+    general: 'Keep the conversation natural, friendly, and brief.',
   };
-  
-  return conversationStrategies[conversationType] || conversationStrategies.general;
+
+  return `${guardrails.join('\n')}\n\nContext: ${perType[conversationType] || perType.general}`;
 }
 
-async function sendInstagramMessage(userId, message) {
-  try {
-    // Placeholder for actual Instagram API call
-    logger.info(`Sending message to user ${userId}: ${message}`);
-    // In a real implementation, use Meta's Graph API with axios
-    
-    // const response = await axios.post(
-    //   `https://graph.facebook.com/v18.0/me/messages?access_token=${process.env.PAGE_ACCESS_TOKEN}`,
-    //   {
-    //     recipient: { id: userId },
-    //     message: { text: message }
-    //   }
-    // );
+/** Truncate a string to a UTF-8 byte budget without splitting a codepoint. */
+function truncateToBytes(str, maxBytes = MAX_MESSAGE_BYTES) {
+  const buf = Buffer.from(str, 'utf8');
+  if (buf.length <= maxBytes) return str;
+  let end = maxBytes - 3; // reserve room for the "…" (3 bytes UTF-8)
+  while (end > 0 && (buf[end] & 0b11000000) === 0b10000000) end--; // don't split a codepoint
+  return buf.slice(0, end).toString('utf8').trimEnd() + '…';
+}
 
-    analyticsService.logMessageSent(userId);
-    return true;
+/**
+ * Send a text message via the Instagram Platform messaging API.
+ * Docs: developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/messaging-api
+ *
+ * POST https://graph.instagram.com/<version>/me/messages
+ * body: { recipient: { id: <IGSID> }, message: { text } }
+ *
+ * Caller is responsible for ensuring the 24h messaging window and opt-out status
+ * have already been checked (see consentService).
+ *
+ * @param {string} recipientId Instagram-scoped user id (IGSID) from the webhook
+ * @param {string} text
+ * @returns {Promise<object>} API response data
+ */
+async function sendInstagramMessage(recipientId, text) {
+  if (!igAccessToken) {
+    logger.error('IG_ACCESS_TOKEN not configured; cannot send message', { recipientId });
+    throw new Error('IG_ACCESS_TOKEN not configured');
+  }
+
+  const payload = {
+    recipient: { id: recipientId },
+    message: { text: truncateToBytes(text) },
+  };
+
+  try {
+    const { data } = await axios.post(
+      `${GRAPH_HOST}/${graphApiVersion}/me/messages`,
+      payload,
+      {
+        params: { access_token: igAccessToken },
+        timeout: 15000,
+      }
+    );
+    analyticsService.logMessageSent(recipientId);
+    logger.info('Message sent', { recipientId, messageId: data.message_id });
+    return data;
   } catch (error) {
-    logger.error(`Failed to send message to user ${userId}:`, error);
+    const apiErr = error.response?.data?.error;
+    logger.error('Failed to send Instagram message', {
+      recipientId,
+      status: error.response?.status,
+      code: apiErr?.code,
+      subcode: apiErr?.error_subcode,
+      message: apiErr?.message || error.message,
+    });
     throw error;
   }
 }
 
-/**
- * Returns a Promise that resolves after a specified timeout.
- * @param {number} ms - The number of milliseconds to wait.
- * @returns {Promise<void>} Resolves after the timeout completes.
- */
-const waitForTimeout = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
-
-/**
- * Convert HTML (including tables, headings, links) to plain text.
- * - Skips <button> elements entirely
- * - Renders headings on their own lines
- * - Preserves paragraphs with blank lines
- * - Inlines links as "text (url)"
- * - Formats tables with tabs between cells and newlines between rows
- *
- * @param {string} html - Raw HTML string to convert
- * @returns {string}    - Plain-text representation
- */
-function htmlResponseToText(html) {
-  //create converter object
-  const converter = new HtmlToText();
-
-  const text = converter.convert(html);
-
-  return text;
-}
-
 module.exports = {
+  disclosureLine,
   analyzeConversationType,
   buildSystemPrompt,
-  sendInstagramMessage
+  truncateToBytes,
+  sendInstagramMessage,
+  MAX_MESSAGE_BYTES,
 };

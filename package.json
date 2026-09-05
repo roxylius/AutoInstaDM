@@ -8,7 +8,7 @@
   },
   "author": "Roxylius",
   "license": "ISC",
-  "description": "AI-powered Instagram DM automation with Fanvue promotion",
+  "description": "Compliant AI assistant that replies to user-initiated Instagram DMs for creators, with mandatory AI disclosure and opt-out",
   "dependencies": {
     "axios": "^1.9.0",
     "body-parser": "^2.2.0",
@@ -17,13 +17,8 @@
     "express": "^5.1.0",
     "express-rate-limit": "^7.5.0",
     "helmet": "^8.1.0",
-    "html-to-text-conv": "^1.0.2",
     "ioredis": "^5.6.1",
-    "jsdom": "^26.1.0",
     "openai": "^5.1.0",
-    "path": "^0.12.7",
-    "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "winston": "^3.17.0"
   }
 }

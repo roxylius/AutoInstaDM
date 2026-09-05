@@ -1,63 +1,55 @@
-const winston = require('winston');
+const { getLogger } = require('../utils/logger');
 
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/analytics.log' })
-  ]
-});
+const logger = getLogger('analytics');
 
+/**
+ * Aggregate, non-identifying operational metrics only (counts + which user ids
+ * are active, so we can honour deletion requests). No message content is stored.
+ */
 class AnalyticsService {
   constructor() {
     this.messagesSent = 0;
     this.messagesReceived = 0;
-    this.promotionsSent = 0;
-    this.conversions = 0;
+    this.optOuts = 0;
+    this.humanHandoffs = 0;
     this.activeUsers = new Set();
     this.dailyStats = new Map();
+  }
+
+  _bump(type) {
+    const today = new Date().toISOString().slice(0, 10);
+    const day = this.dailyStats.get(today) || { sent: 0, received: 0, optOuts: 0, handoffs: 0 };
+    day[type] = (day[type] || 0) + 1;
+    this.dailyStats.set(today, day);
   }
 
   logMessageReceived(userId) {
     this.messagesReceived++;
     this.activeUsers.add(userId);
-    this.updateDailyStats('received');
-    logger.info(`Message received from user ${userId}, total: ${this.messagesReceived}`);
+    this._bump('received');
   }
 
   logMessageSent(userId) {
     this.messagesSent++;
-    this.updateDailyStats('sent');
-    logger.info(`Message sent to user ${userId}, total: ${this.messagesSent}`);
+    this.activeUsers.add(userId);
+    this._bump('sent');
   }
 
-  logPromotionSent(userId) {
-    this.promotionsSent++;
-    this.updateDailyStats('promotions');
-    logger.info(`Promotion sent to user ${userId}, total: ${this.promotionsSent}`);
+  logOptOut(userId) {
+    this.optOuts++;
+    this._bump('optOuts');
+    logger.info('Opt-out recorded', { userId });
   }
 
-  logConversion(userId) {
-    this.conversions++;
-    this.updateDailyStats('conversions');
-    logger.info(`Conversion recorded for user ${userId}, total: ${this.conversions}`);
+  logHumanHandoff(userId) {
+    this.humanHandoffs++;
+    this._bump('handoffs');
+    logger.info('Human handoff recorded', { userId });
   }
 
-  updateDailyStats(type) {
-    const today = new Date().toISOString().split('T')[0];
-    const dailyStat = this.dailyStats.get(today) || {
-      sent: 0,
-      received: 0,
-      promotions: 0,
-      conversions: 0
-    };
-
-    dailyStat[type]++;
-    this.dailyStats.set(today, dailyStat);
+  deleteUser(userId) {
+    this.activeUsers.delete(userId);
+    logger.info('Removed user from analytics active set', { userId });
   }
 
   getStats() {
@@ -65,15 +57,12 @@ class AnalyticsService {
       total: {
         messagesSent: this.messagesSent,
         messagesReceived: this.messagesReceived,
-        promotionsSent: this.promotionsSent,
-        conversions: this.conversions,
+        optOuts: this.optOuts,
+        humanHandoffs: this.humanHandoffs,
         activeUsers: this.activeUsers.size,
-        conversionRate: this.promotionsSent > 0 
-          ? (this.conversions / this.promotionsSent * 100).toFixed(2) 
-          : 0
       },
       daily: Object.fromEntries(this.dailyStats),
-      uptime: process.uptime()
+      uptime: process.uptime(),
     };
   }
 }

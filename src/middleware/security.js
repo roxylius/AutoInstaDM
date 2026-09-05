@@ -1,45 +1,48 @@
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
+const { igAppSecret, nodeEnv } = require('../config/env');
+const { getLogger } = require('../utils/logger');
 
+const logger = getLogger('security');
+
+/**
+ * Verify X-Hub-Signature-256 on incoming webhook POSTs using the app secret.
+ * Requires express.json({ verify }) to have stored the raw body on req.rawBody.
+ */
 exports.verifyWebhookSignature = (req, res, next) => {
-  if (req.method === 'GET') {
-    return next();
+  if (req.method === 'GET') return next();
+
+  if (!igAppSecret) {
+    logger.error('IG_APP_SECRET not set — rejecting webhook POST');
+    return res.status(500).send('Server misconfigured');
   }
 
   const signature = req.get('x-hub-signature-256');
-  if (!signature) {
-    console.warn('Missing signature for POST request');
+  if (!signature || !req.rawBody) {
+    logger.warn('Missing signature or raw body on webhook POST');
     return res.status(403).send('Missing signature');
   }
 
-  const expected = crypto
-    .createHmac('sha256', process.env.META_APP_SECRET)
+  const expected = 'sha256=' + crypto
+    .createHmac('sha256', igAppSecret)
     .update(req.rawBody)
     .digest('hex');
 
-  if (signature !== `sha256=${expected}`) {
-    console.warn('Invalid webhook signature');
+  const ok = signature.length === expected.length
+    && crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+
+  if (!ok) {
+    logger.warn('Invalid webhook signature');
     return res.status(403).send('Forbidden');
   }
   next();
 };
 
 exports.rateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
-  message: 'Too many requests from this IP, please try again later.',
+  windowMs: 15 * 60 * 1000,
+  max: 600,
+  message: 'Too many requests, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
-  // Custom key generator to handle proxy issues properly
-  keyGenerator: (req) => {
-    // For development with ngrok, use a more specific approach
-    const forwarded = req.headers['x-forwarded-for'];
-    if (forwarded) {
-      // Get the first IP and remove any port numbers
-      const ip = forwarded.split(',')[0].trim().replace(/:\d+[^:]*$/, '');
-      return ip;
-    }
-    return req.ip || req.connection.remoteAddress || 'unknown';
-  },
-  skip: (req) => req.method === 'GET' && req.path === '/webhook'
+  skip: (req) => req.method === 'GET' && req.path === '/',
 });
