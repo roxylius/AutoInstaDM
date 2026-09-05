@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Deletion — AutoInstaDM</title>
+  <meta name="theme-color" content="#0b0709" />
+  <meta name="robots" content="index,follow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="nav is-stuck">
+    <a href="index.html" class="wordmark">Auto<i>InstaDM</i></a>
+    <div class="nav__links">
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="index.html#start" class="nav__cta">Get on the list</a>
+    </div>
+  </nav>
+
+  <main class="container legal">
+    <div class="legal__head">
+      <h1>Data Deletion</h1>
+      <p class="updated">Last updated: 5 September 2026</p>
+    </div>
+
+    <div class="legal__body">
+      <p class="note">
+        This page explains how to have data that AutoInstaDM
+        (operated by <strong>[Company Legal Name]</strong>) holds about you deleted.
+        It applies both to people who message a participating creator and to
+        creators who connect their account.
+      </p>
+
+      <h2>1. What we hold</h2>
+      <p>For someone who messages a creator, we store very little:</p>
+      <ul>
+        <li>your Instagram-scoped user ID (a per-app identifier from Meta);</li>
+        <li>whether you have opted out of automated replies or asked for a human;</li>
+        <li>the timestamp of your most recent message and aggregate message counts.</li>
+      </ul>
+      <p>
+        Message text is used only to generate a reply and is not stored afterwards,
+        beyond short-lived processing and standard server logs. Full detail is in the
+        <a href="privacy.html">Privacy Policy</a>.
+      </p>
+
+      <h2>2. How to request deletion</h2>
+      <p>Use whichever is easiest — any one of them removes everything we hold about you:</p>
+      <ul>
+        <li>
+          <strong>Message the creator's Instagram account the word
+          <code>DELETE</code></strong> (or <code>STOP</code>). This is handled
+          automatically.
+        </li>
+        <li>
+          <strong>Remove the app via Meta.</strong> In Instagram, go to
+          <em>Settings &rarr; Website permissions / Apps and websites</em>, remove
+          AutoInstaDM, and Meta sends us a deletion request for your data
+          automatically.
+        </li>
+        <li>
+          <strong>Email us</strong> at
+          <a href="mailto:REPLACE_WITH_YOUR_CONTACT_EMAIL?subject=Data%20deletion%20request">[Contact Email]</a>
+          from any address, describing which Instagram account you messaged from.
+        </li>
+      </ul>
+      <p>
+        Creators can request deletion of their configuration and access tokens by
+        emailing us or disconnecting the app.
+      </p>
+
+      <h2>3. What happens next</h2>
+      <ul>
+        <li>Automated requests (<code>DELETE</code> / app removal) are processed immediately.</li>
+        <li>Email requests are completed within <strong>30 days</strong>; we may ask one question to confirm which data is yours.</li>
+        <li>We delete your conversation state, opt-out record, and analytics entries, and remove any queued messages. Backups roll off within their normal retention cycle.</li>
+        <li>We'll confirm by the same channel you contacted us on.</li>
+      </ul>
+
+      <h2>4. Automated deletion endpoint (for Meta)</h2>
+      <p>
+        AutoInstaDM also exposes a machine-to-machine data-deletion callback that
+        Meta calls when a user removes the app:
+        <code>https://[your-app-host]/webhook/deletion-callback</code>. It verifies
+        Meta's signed request, deletes the user's data, and returns a confirmation
+        code and status URL.
+      </p>
+
+      <h2>5. Contact</h2>
+      <p>[Company Legal Name], [Registered Address]. Email:
+        <a href="mailto:REPLACE_WITH_YOUR_CONTACT_EMAIL">[Contact Email]</a>.
+        You can also complain to your local data-protection authority.</p>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="container foot__base" style="border-top:0;margin-top:0">
+      <a href="index.html" class="wordmark">Auto<i>InstaDM</i></a>
+      <span class="foot__legal">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <span>© <span id="year">2026</span></span>
+      </span>
+    </div>
+  </footer>
+  <script>var y=document.getElementById('year');if(y)y.textContent=new Date().getFullYear();</script>
+</body>
+</html>

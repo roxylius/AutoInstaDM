@@ -33,8 +33,11 @@ grep -rn "REPLACE_WITH_YOUR_CONTACT_EMAIL\|\[Company Legal Name\]\|\[Jurisdictio
 
 No environment variables or framework preset are needed — it's a static site.
 
-## After deploying
+Pages: `/` · `/privacy` · `/terms` · `/data-deletion`
 
-- Put `https://<your-domain>/privacy` as the **Privacy Policy URL** in the Meta app dashboard.
-- The data-deletion callback lives on the *app server*, not this site:
-  `https://<app-host>/webhook/deletion-callback`.
+## After deploying — Meta app dashboard
+
+- **Privacy Policy URL** → `https://<your-domain>/privacy`
+- **Data Deletion Instructions URL** → `https://<your-domain>/data-deletion`
+- **Data Deletion Request (callback) URL** → `https://<app-host>/webhook/deletion-callback`
+  — this one lives on the *app server*, not this static site.
