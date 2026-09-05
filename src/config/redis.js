@@ -1,29 +1,20 @@
 const Redis = require('ioredis');
 const { redisUrl } = require('./env');
-const winston = require('winston');
+const { getLogger } = require('../utils/logger');
 
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/redis.log' })
-  ]
-});
+const logger = getLogger('redis');
 
 let client = null;
-if (process.env.NODE_ENV === 'production' && redisUrl) {
+
+if (redisUrl) {
   client = new Redis(redisUrl, {
     enableAutoPipelining: true,
-    maxRetriesPerRequest: 1,
-    lazyConnect: true
+    maxRetriesPerRequest: 2,
   });
-  logger.info('Redis client initialized for production');
+  client.on('connect', () => logger.info('Redis connected'));
+  client.on('error', (err) => logger.error('Redis error', { error: err.message }));
 } else {
-  logger.info('Redis client not initialized, using in-memory storage');
+  logger.info('REDIS_URL not set — using in-memory state (single instance only)');
 }
 
 module.exports = client;

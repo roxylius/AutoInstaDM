@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoInstaDM — never left on read</title>
+  <meta name="description" content="An AI assistant that answers the fan DMs Instagram creators receive. It tells everyone it's a bot, and anyone can opt out with one word." />
+  <meta name="theme-color" content="#0b0709" />
+  <meta property="og:title" content="AutoInstaDM — never left on read" />
+  <meta property="og:description" content="An honest AI assistant for creators' Instagram DMs. Discloses it's AI. Opt-out in one word." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <a href="#top" class="wordmark">Auto<i>InstaDM</i></a>
+    <div class="nav__links">
+      <a href="#how">How it works</a>
+      <a href="#honest">The honest bit</a>
+      <a href="#rules">Guardrails</a>
+      <a href="#faq">FAQ</a>
+      <a href="#start" class="nav__cta">Get on the list</a>
+    </div>
+  </nav>
+
+  <main id="top">
+    <!-- HERO -->
+    <header class="hero section--flush">
+      <div class="container">
+        <div class="hero__grid">
+          <div class="hero__copy">
+            <span class="kicker reveal">AI DM assistant for creators — v1</span>
+            <h1 class="display reveal" data-d="1">
+              Never left<br /><em class="tint">on read.</em>
+            </h1>
+            <p class="lead reveal" data-d="2">
+              Your inbox fills faster than you can answer it. AutoInstaDM replies to
+              every fan the second they message — in your voice, within the rules,
+              and it never pretends to be you.
+            </p>
+            <div class="hero__actions reveal" data-d="3">
+              <a href="#start" class="btn btn--primary">Get on the list <span class="arrow">↗</span></a>
+              <a href="#how" class="btn btn--ghost">See it work</a>
+            </div>
+            <p class="hero__note reveal" data-d="3">
+              <b>02:41</b> — fan messaged &nbsp;·&nbsp; <b>02:41</b> — replied
+            </p>
+          </div>
+
+          <!-- live thread -->
+          <div class="thread reveal" data-d="2" aria-hidden="true">
+            <div class="thread__top">
+              <div class="thread__ava"></div>
+              <div class="thread__who">
+                <b>@yourhandle</b>
+                <span>● active now</span>
+              </div>
+            </div>
+            <div class="thread__body" id="thread"></div>
+            <div class="thread__compose">Message…</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MARQUEE -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__row" id="marquee">
+        <span>are you real?</span><span>how much is it?</span><span>what's the link</span>
+        <span>do you do customs?</span><span>can I see more</span><span>are you a bot</span>
+        <span>when's the next drop</span><span>hi gorgeous</span>
+      </div>
+    </div>
+
+    <!-- PROBLEM -->
+    <section class="section">
+      <div class="container split">
+        <div class="reveal">
+          <p class="bignum"><span class="tint">1,400</span></p>
+          <p class="annot">// unread. the average creator's backlog after one week off.</p>
+        </div>
+        <div class="reveal" data-d="1">
+          <h2 class="head">Every unread DM is a fan <em>losing interest</em> — and a sale cooling off.</h2>
+          <p style="margin-top:1.2rem">
+            You can't be awake 24 hours a day, and hiring someone to run your inbox
+            means handing a stranger your account and your fans. AutoInstaDM sits in
+            the middle: instant, on-brand, and honest about what it is.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW -->
+    <section class="section" id="how">
+      <div class="container">
+        <span class="kicker reveal">How it works</span>
+        <h2 class="head reveal" data-d="1" style="margin-top:1.4rem">It only ever reacts. Nothing goes out cold.</h2>
+        <div class="steps">
+          <div class="step reveal">
+            <div class="step__n">01</div>
+            <div>
+              <h3>Connect your account</h3>
+              <p>Link your Instagram professional account through Meta's official login. We ask for the two permissions needed to read and reply to DMs — nothing else.</p>
+            </div>
+          </div>
+          <div class="step reveal">
+            <div class="step__n">02</div>
+            <div>
+              <h3>A fan messages first</h3>
+              <p>The assistant waits for someone to open the conversation, then replies inside Instagram's 24-hour window. It never messages people who didn't message you.</p>
+            </div>
+          </div>
+          <div class="step reveal">
+            <div class="step__n">03</div>
+            <div>
+              <h3>It discloses, then helps</h3>
+              <p>The first reply says it's an AI assistant. It answers the usual questions in your tone and drops your link only when someone actually asks for it.</p>
+            </div>
+          </div>
+          <div class="step reveal">
+            <div class="step__n">04</div>
+            <div>
+              <h3>You take over anytime</h3>
+              <p>Someone types "human", or you just want to jump in — automation pauses for that thread and a real person carries it from there.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MANIFESTO -->
+    <section class="section manifesto" id="honest">
+      <div class="container">
+        <span class="kicker reveal">The honest bit</span>
+        <p class="reveal" data-d="1">
+          It <em class="tint">tells them</em> it's a bot.<br />
+          Ask if it's real — it says no.<br />
+          Type <em>stop</em> — it's gone for good.
+        </p>
+        <p style="margin:2.5rem auto 0;max-width:52ch;font-family:var(--sans);font-size:1.05rem;color:var(--cream-dim)" class="reveal" data-d="2">
+          Hiding a bot behind a creator's face is deceptive, and it's against
+          Instagram's rules. So we don't. The disclosure is the product.
+        </p>
+      </div>
+    </section>
+
+    <!-- RULES -->
+    <section class="section" id="rules">
+      <div class="container">
+        <span class="kicker reveal">Guardrails</span>
+        <h2 class="head reveal" data-d="1" style="margin-top:1.4rem">Built to live inside the platform rules.</h2>
+        <div class="cards">
+          <div class="card reveal"><h3>Inbound only</h3><p>No cold outreach, no bulk sends, no follower scraping. The assistant answers conversations users start.</p></div>
+          <div class="card reveal" data-d="1"><h3>PG-13 replies</h3><p>The assistant keeps messages non-explicit. Instagram prohibits sexual content in DMs — the guardrails hold that line.</p></div>
+          <div class="card reveal" data-d="2"><h3>Minimal data</h3><p>We keep your scoped user ID, opt-out status and message counts. Message content isn't stored past drafting a reply.</p></div>
+          <div class="card reveal" data-d="3"><h3>Deletion on request</h3><p>Fans and creators can wipe every trace of their data. Requests are honoured within 30 days.</p></div>
+        </div>
+        <p style="margin-top:1.6rem;font-size:0.9rem;color:var(--cream-faint)" class="reveal">
+          Your content and the link you configure are your responsibility. Promoting adult content or services through Instagram DMs can breach Instagram's rules regardless of this tool — see the <a href="terms.html#acceptable-use" style="color:var(--pink)">acceptable-use terms</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="container">
+        <span class="kicker reveal">Questions</span>
+        <div class="faq reveal" data-d="1">
+          <details><summary>Does it pretend to be me?</summary><p>No. The first automated message in every conversation states that it's an AI assistant acting on your behalf, and it confirms it's a bot whenever asked. That's a hard rule, not a setting.</p></details>
+          <details><summary>Will this get my account banned?</summary><p>It's designed to operate within the Instagram Platform Terms — inbound-only, disclosed, opt-out honoured, inside the 24-hour window. What it can't do is make an underlying use compliant: if the link you share solicits adult services, that carries risk regardless of this tool. We're upfront about that.</p></details>
+          <details><summary>Which AI does it use?</summary><p>Any standard, paid, OpenAI-compatible provider you choose — OpenAI, Anthropic, and others. No scraping of chat apps, no throwaway accounts.</p></details>
+          <details><summary>Can a real person still reply?</summary><p>Always. A fan can ask for a human, or you can take any thread over manually — automation pauses for that conversation immediately.</p></details>
+          <details><summary>What does it store about my fans?</summary><p>An Instagram-scoped ID, whether they opted out, and timestamps. Message text is used to draft the reply and then dropped. Full detail in the <a href="privacy.html">privacy policy</a>.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section cta" id="start">
+      <div class="container">
+        <span class="kicker reveal" style="justify-content:center">Early access</span>
+        <h2 class="display reveal" data-d="1" style="font-size:clamp(2.6rem,1rem+7vw,6rem);margin-top:1.4rem">Hand over<br /><em class="tint">the inbox.</em></h2>
+        <p class="lead reveal" data-d="2" style="margin:0 auto 2.4rem">We're onboarding creators in small batches. Tell us about your account and we'll be in touch.</p>
+        <a href="mailto:REPLACE_WITH_YOUR_CONTACT_EMAIL?subject=AutoInstaDM%20early%20access" class="btn btn--primary reveal" data-d="2">Email the team <span class="arrow">↗</span></a>
+        <p style="margin-top:1.4rem;font-family:var(--mono);font-size:0.72rem;color:var(--cream-faint)" class="reveal" data-d="3">Replace the contact address in the HTML before you deploy.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="container">
+      <div class="foot__top">
+        <p class="foot__disc">
+          AutoInstaDM is an AI assistant. It discloses that it's automated in every
+          conversation. Reply <b>stop</b> to any thread and it will never message
+          you again.
+        </p>
+        <nav class="foot__links">
+          <a href="#how">How it works</a>
+          <a href="#honest">The honest bit</a>
+          <a href="privacy.html">Privacy policy</a>
+          <a href="terms.html">Terms of service</a>
+          <a href="mailto:REPLACE_WITH_YOUR_CONTACT_EMAIL">Contact</a>
+        </nav>
+      </div>
+      <div class="foot__base">
+        <a href="#top" class="wordmark">Auto<i>InstaDM</i></a>
+        <span class="foot__legal">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <span>© <span id="year">2026</span> · not affiliated with Meta or Instagram</span>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
